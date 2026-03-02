@@ -38,6 +38,9 @@ import { GhostDealTracker } from './components/GhostDealTracker';
 import { SatelliteEye } from './components/SatelliteEye';
 import { EgoLinguistics } from './components/EgoLinguistics';
 import { WatchdogTools } from './components/WatchdogTools';
+import { IntelligenceHub } from './components/IntelligenceHub';
+import { DonationPopup } from './components/DonationPopup';
+import { WarUpdateDashboard } from './components/WarUpdateDashboard';
 
 // --- Components ---
 
@@ -67,20 +70,30 @@ const Navbar = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <div className="flex items-center gap-2 group cursor-pointer">
-            <div className="w-10 h-10 rounded-full border-2 border-emerald-500 flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-emerald-500/20 group-hover:bg-emerald-500/40 transition-colors" />
-              <div className="w-5 h-5 bg-emerald-500 rounded-full relative z-10 shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
+          <div className="flex items-center gap-3 group cursor-pointer">
+            <div className="w-16 h-16 rounded-full border-2 border-emerald-500 flex items-center justify-center relative overflow-hidden bg-white shadow-[0_0_25px_rgba(16,185,129,0.3)]">
+              <img 
+                src="https://ais-pre-s4v7wzczabcshaiexh367c-547543701623.asia-southeast1.run.app/logo.png" 
+                alt="TPA Logo" 
+                className="w-full h-full object-cover scale-[1.2] transform translate-y-[-2px]"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "https://picsum.photos/seed/tpa-logo/100/100";
+                }}
+              />
             </div>
-            <span className="font-display font-bold text-2xl tracking-tighter">TPA</span>
+            <div className="flex flex-col">
+              <span className="font-display font-bold text-2xl tracking-tighter leading-none">Terra Peace</span>
+              <span className="text-[11px] font-mono text-emerald-400 uppercase tracking-[0.25em] font-bold">Alliance</span>
+            </div>
           </div>
           
           <div className="hidden md:flex items-center gap-8">
             {[
+              { name: 'Hub', href: '#intelligence-hub' },
               { name: 'GPIE', href: '#gpie' },
               { name: 'Ghost Deals', href: '#ghost-deals' },
               { name: 'Watchdog', href: '#watchdog' },
-              { name: 'Intelligence', href: '#intelligence' },
               { name: 'Legal', href: '#legal' },
               { name: 'Vote', href: '#terra-vote' }
             ].map((item) => (
@@ -112,10 +125,10 @@ const Navbar = () => {
           animate={{ opacity: 1, y: 0 }}
           className="md:hidden glass border-b border-white/10 px-4 py-4 space-y-4"
         >
-          {['GPIE', 'Ghost Deals', 'Watchdog', 'Intelligence', 'Legal', 'Terra-Vote'].map((item) => (
+          {['Hub', 'GPIE', 'Ghost Deals', 'Watchdog', 'Legal', 'Terra-Vote'].map((item) => (
             <a 
               key={item} 
-              href={`#${item.toLowerCase().replace(' ', '-')}`} 
+              href={`#${item === 'Hub' ? 'intelligence-hub' : item.toLowerCase().replace(' ', '-')}`} 
               onClick={() => setIsOpen(false)}
               className="block text-lg font-medium text-white/70"
             >
@@ -487,11 +500,23 @@ const Footer = () => {
 // --- Main App ---
 
 export default function App() {
+  const [isDonationOpen, setIsDonationOpen] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsDonationOpen(true);
+    }, 4 * 60 * 1000); // 4 minutes
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen selection:bg-emerald-500/30">
       <Navbar />
       <main>
         <Hero />
+        <WarUpdateDashboard />
+        <IntelligenceHub />
         <GPIEDashboard />
         <GhostDealTracker />
         <SatelliteEye />
@@ -651,6 +676,7 @@ export default function App() {
       </main>
       <Footer />
       <DiplomatBot />
+      <DonationPopup isOpen={isDonationOpen} onClose={() => setIsDonationOpen(false)} />
     </div>
   );
 }
